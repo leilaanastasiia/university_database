@@ -1,0 +1,10 @@
+# System files
+/venv/
+/.env
+
+# Pycharm
+/.idea/
+
+# Database files
+/dataset.db
+/app/dataset.db
