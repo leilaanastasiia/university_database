@@ -12,20 +12,20 @@ async def send_welcome(message: types.Message):
     Shows greeting.
     """
     await message.reply('Привіт!\n'
-                        'Я бот кафедри біології рослин 🌸\n'
+                        'Я бот кафедри біології рослин 🌻\n'
                         'Введи назву лекції, що буде для мене ключем '
                         'для пошуку потрібної тобі інформації.')
 
 
 @dp.message_handler(commands=['help'])
-async def send_welcome(message: types.Message):
+async def send_help(message: types.Message):
     """
     Shows explanations what could be done wrong.
     """
-    await message.reply('1. Будь-яке повідомлення, що почнається без "/(назва команди)", '
+    await message.reply('🌱 Будь-яке повідомлення, що почнається без "/(назва команди)", '
                         'я сприймаю як назву тему для пошуку матеріалів. '
                         'Якщо потрібні інші дії - використай меню команд або надрукуй їх.\n\n'
-                        '2. Найважливіше - вводь теми для пошуку, що вказані у відповіді команди /topics. '
+                        '🌱 Найважливіше - вводь теми для пошуку, що вказані у відповіді команди /topics. '
                         'Без будь-яких додаткових знаків. Це зменшить кількість можливих помилок. \n\n'
                         '\n📍 Якщо все одно виникає помилка - заскрінь свої дії та скинь напряму '
                         'розробниці: @leilaanastasiia\nНамагатимусь допомогти 🪴')
@@ -56,13 +56,13 @@ async def admin(message: types.Message):
     if user_id in LIST_OF_ADMINS:
         keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
         text_and_data = (
-            ('Додати тему', 'add'),
-            ('Видалити тему', 'delete'),
-            ('Очистити всю базу', 'clear'),
+            ('Додати тему ✅', 'add'),
+            ('Видалити тему ❌', 'delete'),
+            ('Очистити всю базу ⛔', 'clear'),
         )
         row_btns = (types.InlineKeyboardButton(text, callback_data=data) for text, data in text_and_data)
         keyboard_markup.add(*row_btns)
-        await message.reply('Доступ дозволено 🌿\n'
+        await message.reply('Доступ дозволено 🌾\n'
                             'Оберіть, будь ласка, що потрібно зробити:', reply_markup=keyboard_markup)
     else:
         await message.reply('Ти не пройдьош!')
@@ -124,7 +124,25 @@ async def add_topic(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(text='delete')
 async def callback_delete_topic(query: types.CallbackQuery):
     """
-    Callback for 'add' button.
+    Callback for 'delete' button.
+    """
+    keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
+    text_and_data = (
+        ('Так, видалити 😈', 'real_delete'),
+    )
+    row_btns = (types.InlineKeyboardButton(text, callback_data=data) for text, data in text_and_data)
+    keyboard_markup.add(*row_btns)
+    text = 'Ви впевнені, що хочете видалити тему з бази?\n\n' \
+           'Якщо це помилка - просто продовжуйте роботу у звичайному режимі.\n\n' \
+           'Меню викладачів: /admin\nПошук тем: /start'
+    await query.answer('Ви впевнені?')
+    await bot.send_message(query.from_user.id, text, reply_markup=keyboard_markup)
+
+
+@dp.callback_query_handler(text='real_delete')
+async def callback_real_delete_topic(query: types.CallbackQuery):
+    """
+    Callback for real 'delete' button.
     """
     await Admin.delete.set()
     text = 'Щоб видалити тему, введіть її назву.\n' \
@@ -152,6 +170,24 @@ async def delete_topic(message: types.Message, state: FSMContext):
 async def callback_clear(query: types.CallbackQuery):
     """
     Delete all rows in the table.
+    """
+    keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
+    text_and_data = (
+        ('Так, очистити 📂', 'real_clear'),
+    )
+    row_btns = (types.InlineKeyboardButton(text, callback_data=data) for text, data in text_and_data)
+    keyboard_markup.add(*row_btns)
+    text = 'Ви впевнені, що хочете очистити всю базу?\n\n' \
+           'Якщо це помилка - просто продовжуйте роботу у звичайному режимі.\n\n' \
+           'Меню викладачів: /admin\nПошук тем: /start'
+    await query.answer('Ви впевнені?')
+    await bot.send_message(query.from_user.id, text, reply_markup=keyboard_markup)
+
+
+@dp.callback_query_handler(text='real_clear')
+async def callback_real_clear(query: types.CallbackQuery):
+    """
+    Real delete all rows in the table.
     """
     delete_rows()
     text = 'Базу повністю очищено!'
