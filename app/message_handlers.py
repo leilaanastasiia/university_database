@@ -37,13 +37,14 @@ async def send_topics(message: types.Message):
     Shows list of available topics.
     """
     output = ''
-    try:
-        topics = get_topics_list()
-        for topic in topics:
-            output += topic + '\n'
-        await message.reply(f'{output}')
-    except Exception:
+    topics = get_topics_list()
+    if not topics:
         await message.reply('У базі поки що немає доступних тем.')
+        return
+
+    for topic in topics:
+        output += topic + '\n'
+    await message.reply(f'{output}')
 
 
 @dp.message_handler(commands=['admin'])
