@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 
-from app.bot import bot, dp, LIST_OF_ADMINS
+from app.bot import bot, dp, LIST_OF_ADMINS, MAX_INPUT_SIZE
 from app.db import get_topics_list, get_row, delete_rows, delete_row, insert_row
 from app.states import Admin
 
@@ -104,11 +104,11 @@ async def add_topic(message: types.Message, state: FSMContext):
     """
     topics = get_topics_list()
     data = message.text.split('\n')
-    if len(data) < 5:
+    if len(data) < MAX_INPUT_SIZE:
         await message.reply('Здається, не всі поля заповнені 🤔\n'
                             'Будь ласка, вводьте данні у форматі, що вказаний вище.')
         return
-    if len(data) > 5:
+    if len(data) > MAX_INPUT_SIZE:
         await message.reply('Здається, введено занадто багато даних 🤔\n'
                             'Будь ласка, вводьте данні у форматі, що вказаний вище.')
         return
@@ -204,10 +204,10 @@ async def send_reply(message: types.Message):
     if message.text in themes:
         row = get_row(message.text)
         await message.reply(f'Тема: {row[0][0]}\n\n'
-                             f'Посилання на лекцію: {row[0][1]}\n\n'
-                             f'Посилання на відеозапис лабораторної работи: {row[0][2]}\n\n'
-                             f'Посилання на протокол лобораторної роботи: {row[0][3]} \n\n'
-                             f'Коментарі викладача: {row[0][4]}\n\n'
-                             'Успіхів!')
+                            f'Посилання на лекцію: {row[0][1]}\n\n'
+                            f'Посилання на відеозапис лабораторної работи: {row[0][2]}\n\n'
+                            f'Посилання на протокол лобораторної роботи: {row[0][3]} \n\n'
+                            f'Коментарі викладача: {row[0][4]}\n\n'
+                            'Успіхів!')
     else:
         await message.reply(f'Такої теми в базі не знайдено 🤔')

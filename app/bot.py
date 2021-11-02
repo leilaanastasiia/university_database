@@ -8,6 +8,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 load_dotenv()
 API_TOKEN = os.getenv('BOT_TOKEN')
 LIST_OF_ADMINS = os.getenv('LIST_OF_ADMINS')
+MAX_INPUT_SIZE = int(os.getenv('MAX_INPUT_SIZE'))
 
 logging.basicConfig(level=logging.INFO)
 
